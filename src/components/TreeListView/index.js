@@ -1,0 +1,52 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { ScrollView, Text, View } from 'react-native';
+import styled from 'styled-components/native';
+
+import { CardSection, Card } from '../common/';
+import NodeCell from './NodeCell';
+class TreeListView extends Component {
+
+  nodeClicked(node) {
+    console.log(node.title);
+    this.props.onNodePress(node);
+  }
+
+  // recursive tree structure rendering
+  renderNode(node) {
+    // the case where children key is undefined
+    if (node.children === undefined || !node.children.length) {
+      return (
+        <NodeCell key={node.title} node={node} nodeClicked={this.nodeClicked.bind(this, node)} />
+      );
+    }
+
+    // recursively render children in parent node
+    return (
+      <View>
+        <NodeCell key={node.title} node={node} nodeClicked={this.nodeClicked.bind(this, node)}>
+          {node.children.map((child) => this.renderNode(child))}
+        </NodeCell>
+      </View>
+    );
+  }
+
+  render() {
+    const nodes = this.props.nodes.map((node) => this.renderNode(node));
+    return (
+      <ScrollView>
+        {nodes.length ? nodes : <Text>No Children</Text>}
+      </ScrollView>
+    );
+  }
+}
+
+TreeListView.propTypes = {
+  nodes: PropTypes.array,
+};
+
+TreeListView.defaultProps = {
+  nodes: [],
+};
+
+export default TreeListView;
