@@ -1,27 +1,75 @@
-{  
-   "menuItems":[  
-      {  
+{
+   "menuItems":[
+     {
+        "id":102,
+        "checkDesc":"Miniature Games",
+        "basePrice":0,
+        "modifierType":"NONE",
+        "salesMode":"BUTTON_ONLY",
+        "childMenuItems":[
+           {
+              "id":203,
+              "checkDesc":"X-Wing Core",
+              "basePrice":39.99,
+              "modifierType":"NONE",
+              "salesMode":"NORMAL"
+           },
+           {
+              "id":204,
+              "checkDesc":"Warhammer 40K",
+              "basePrice":139.99,
+              "modifierType":"NONE",
+              "salesMode":"NORMAL",
+              "childMenuItems":[
+                 {
+                    "id":303,
+                    "checkDesc":"Warhammer 40K Mod",
+                    "basePrice":0,
+                    "modifierType":"OPTIONAL",
+                    "salesMode":"MODIFIER_GROUP",
+                    "childMenuItems":[
+                       {
+                          "id":405,
+                          "checkDesc":"Marbel Dice",
+                          "basePrice":0.00,
+                          "modifierType":"TERMINAL",
+                          "salesMode":"MODIFIER"
+                       },
+                       {
+                          "id":406,
+                          "checkDesc":"Measuring Tape",
+                          "basePrice":0.00,
+                          "modifierType":"TERMINAL",
+                          "salesMode":"MODIFIER"
+                       }
+                    ]
+                 }
+              ]
+           }
+        ]
+     },
+      {
          "id":101,
          "checkDesc":"Board Games",
          "basePrice":0,
          "modifierType":"NONE",
          "salesMode":"BUTTON_ONLY",
-         "childMenuItems":[  
-            {  
+         "childMenuItems":[
+            {
                "id":201,
                "checkDesc":"Dark Souls",
                "basePrice":99.99,
                "modifierType":"NONE",
                "salesMode":"NORMAL",
-               "childMenuItems":[  
-                  {  
+               "childMenuItems":[
+                  {
                      "id":301,
                      "checkDesc":"Dark Souls Mod",
                      "basePrice":0,
                      "modifierType":"OPTIONAL",
                      "salesMode":"MODIFIER_GROUP",
-                     "childMenuItems":[  
-                        {  
+                     "childMenuItems":[
+                        {
                            "id":401,
                            "checkDesc":"Painted Miniatures",
                            "basePrice":20.00,
@@ -32,81 +80,33 @@
                   }
                ]
             },
-            {  
+            {
                "id":202,
                "checkDesc":"Monopoly",
                "basePrice":29.99,
                "modifierType":"NONE",
                "salesMode":"NORMAL",
-               "childMenuItems":[  
-                  {  
+               "childMenuItems":[
+                  {
                      "id":302,
                      "checkDesc":"Monopoly Mod",
                      "basePrice":0,
                      "modifierType":"OPTIONAL",
                      "salesMode":"MODIFIER_GROUP",
-                     "childMenuItems":[  
-                        {  
+                     "childMenuItems":[
+                        {
                            "id":402,
                            "checkDesc":"Metal Pawns",
                            "basePrice":0.00,
                            "modifierType":"TERMINAL",
                            "salesMode":"MODIFIER"
                         },
-                        {  
+                        {
                            "id":403,
                            "checkDesc":"Wooden Property",
                            "basePrice":0.00,
                            "modifierType":"TERMINAL",
                            "salesMode":"MODIFIER"
-                        }
-                     ]
-                  }
-               ]
-            },
-            {  
-               "id":102,
-               "checkDesc":"Miniature Games",
-               "basePrice":0,
-               "modifierType":"NONE",
-               "salesMode":"BUTTON_ONLY",
-               "childMenuItems":[  
-                  {  
-                     "id":203,
-                     "checkDesc":"X-Wing Core",
-                     "basePrice":39.99,
-                     "modifierType":"NONE",
-                     "salesMode":"NORMAL"
-                  },
-                  {  
-                     "id":204,
-                     "checkDesc":"Warhammer 40K",
-                     "basePrice":139.99,
-                     "modifierType":"NONE",
-                     "salesMode":"NORMAL",
-                     "childMenuItems":[  
-                        {  
-                           "id":303,
-                           "checkDesc":"Warhammer 40K Mod",
-                           "basePrice":0,
-                           "modifierType":"OPTIONAL",
-                           "salesMode":"MODIFIER_GROUP",
-                           "childMenuItems":[  
-                              {  
-                                 "id":405,
-                                 "checkDesc":"Marbel Dice",
-                                 "basePrice":0.00,
-                                 "modifierType":"TERMINAL",
-                                 "salesMode":"MODIFIER"
-                              },
-                              {  
-                                 "id":406,
-                                 "checkDesc":"Measuring Tape",
-                                 "basePrice":0.00,
-                                 "modifierType":"TERMINAL",
-                                 "salesMode":"MODIFIER"
-                              }
-                           ]
                         }
                      ]
                   }

@@ -23,7 +23,7 @@ describe('dataAdapter', () => {
 describe('rawChildToChild', () => {
   it('should return child data structure', () => {
     const input = require('../../../datasets/games.json');
-    let firstChild = input.menuItems[0];
+    let firstChild = input.menuItems;
 
     expect(rawChildToChild(firstChild).title).toEqual(firstChild.checkDesc);
   });
