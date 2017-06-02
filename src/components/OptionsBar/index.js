@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View, Button } from 'react-native';
 import styled from 'styled-components/native';
 
@@ -23,5 +24,17 @@ class OptionsBar extends Component {
     );
   }
 }
+
+OptionsBar.propTypes = {
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string,
+    }),
+  ),
+};
+
+OptionsBar.defaultProps = {
+  options: [],
+};
 
 export default OptionsBar;

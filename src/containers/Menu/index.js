@@ -6,19 +6,26 @@ import Section from '../../components/Section';
 import OptionsBar from '../../components/OptionsBar';
 import TreeListView from '../../components/TreeListView';
 
+// just styling for text on left
 const SelectedNode = styled.Text`
   fontSize: 30;
   textAlign: center;
 `;
 
+// took this project head on with some tree traversals to give
+// it a robust dynamic functionality
+
 // helper for tree traversal to transform data
 // structure for the child nodes
 export const rawChildToChild = (rawChild) => {
+  // if the data is completely messed up return
   if (!rawChild) return {};
 
   // start new structure
   let newStruct = {
     title: rawChild.checkDesc,
+    salesMode: rawChild.salesMode,
+    modifierType: rawChild.modifierType,
   };
 
   // deepest child
@@ -37,6 +44,7 @@ export const dataAdapter = (data) => {
 };
 
 class Menu extends Component {
+  // wish i could get ride of having a custom constructor
   constructor(props) {
     super(props);
 
@@ -44,31 +52,47 @@ class Menu extends Component {
     const rawNodes = require('../../datasets/games.json');
     this.state = {
       selectedNodeChildren: [],
+      // create expected nodes data structure
       nodes: dataAdapter(rawNodes), 
-      selectedNode: { title: 'No node selected', children: [] },
+      selectedNodes: [{ title: 'No node selected', children: [] }],
     };
   }
+
   optionSelected(option) {
     // create space for appending children where root name equals option
     let children = [];
     this.state.nodes.forEach((node) => { if (node.title === option) return children.push(...node.children)});
-    console.log(children);
     this.setState({
       selectedNodeChildren: children,
     });
   }
 
+  // WIP: still need to implement business logic
   nodePressed(node) {
-    console.log(node);
+    const newSelectedNodes = [ ...this.state.selectedNodes, node ];
     this.setState({
-      selectedNode: node,
+      selectedNodes: newSelectedNodes,
     });
   }
+
+  nodeRemove(node) {
+    const nodeIndex = this.state.selectedNodes.map((n, i) => { if (n.title === node.title) return i })[1];
+    const newSelectedNodes = [
+      ...this.state.selectedNodes.slice(0, nodeIndex),
+      ...this.state.selectedNodes.slice(nodeIndex + 1),
+    ]
+    console.log(newSelectedNodes);
+    console.log(nodeIndex);
+    this.setState({
+      selectedNodes: newSelectedNodes,
+    });
+  }
+
   render() {
     return (
       <View style={{ flex: 1, paddingTop: 11, flexWrap: 'wrap', flexDirection: 'row' }}>
         <Section>
-          <SelectedNode>{this.state.selectedNode.title}</SelectedNode>
+          <TreeListView nodes={this.state.selectedNodes} onNodePress={this.nodeRemove.bind(this)} />
         </Section>
         <Section>
           <OptionsBar
