@@ -8,7 +8,6 @@ import NodeCell from './NodeCell';
 class TreeListView extends Component {
 
   nodeClicked(node) {
-    console.log(node.title);
     this.props.onNodePress(node);
   }
 
@@ -17,14 +16,14 @@ class TreeListView extends Component {
     // the case where children key is undefined
     if (node.children === undefined || !node.children.length) {
       return (
-        <NodeCell key={node.title} node={node} nodeClicked={this.nodeClicked.bind(this, node)} />
+        <NodeCell key={`node-${node.id}`} node={node} nodeClicked={this.nodeClicked.bind(this, node)} />
       );
     }
 
     // recursively render children in parent node
     return (
       <View>
-        <NodeCell key={node.title} node={node} nodeClicked={this.nodeClicked.bind(this, node)}>
+        <NodeCell key={`node-${node.id}`} node={node} nodeClicked={this.nodeClicked.bind(this, node)}>
           {node.children.map((child) => this.renderNode(child))}
         </NodeCell>
       </View>

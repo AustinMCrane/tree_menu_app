@@ -19,7 +19,7 @@ class OptionsBar extends Component {
   render() {
     return (
       <Bar>
-        {this.props.options.map((option) => <BarItem selected onPress={this.props.onOptionSelect.bind(this, option)} title={option} />)}
+        {this.props.options.map((option) => <BarItem selected key={option} onPress={this.props.onOptionSelect.bind(this, option)} title={option} />)}
       </Bar>
     );
   }
@@ -27,9 +27,7 @@ class OptionsBar extends Component {
 
 OptionsBar.propTypes = {
   options: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string,
-    }),
+    PropTypes.string,
   ),
 };
 

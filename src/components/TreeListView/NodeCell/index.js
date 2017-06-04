@@ -24,7 +24,7 @@ ChildrenCard.defaultProps = {
 
 const NodeCell = ({ node, nodeClicked, children }) => {
   return (
-    <View>
+    <View key={`child-${node.id}`}>
       <Card onPress={nodeClicked.bind(node)}>
         <CardSection>
           <Text>
@@ -40,6 +40,8 @@ const NodeCell = ({ node, nodeClicked, children }) => {
 NodeCell.propTypes = {
   node: PropTypes.shape({
     title: PropTypes.string,
+    modifierType: PropTypes.string,
+    salesMode: PropTypes.string,
   }),
   nodeClicked: PropTypes.func,
   children: React.PropTypes.oneOfType([
@@ -49,7 +51,7 @@ NodeCell.propTypes = {
 };
 
 NodeCell.defaultProps = {
-  node: { title: 'Default Node' },
+  node: { title: 'Default Node', modifierType: 'NONE', id: -1, salesMode: 'NONE' },
   nodeClicked: (node) => console.log(node)
 };
 

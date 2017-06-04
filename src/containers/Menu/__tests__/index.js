@@ -2,7 +2,8 @@ import React from 'react';
 import { Text, ScrollViewMock } from 'react-native';
 import { shallow } from 'enzyme';
 
-import Menu, { dataAdapter, rawChildToChild } from '../';
+import { Menu } from '../';
+import { dataAdapter, rawChildToChild } from '../utils';
 
 describe('Menu', () => {
   it('renders with default props', () => {

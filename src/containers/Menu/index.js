@@ -1,102 +1,67 @@
 import React, { Component } from 'react';
 import { View, Text, ListView } from 'react-native';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Section from '../../components/Section';
 import OptionsBar from '../../components/OptionsBar';
 import TreeListView from '../../components/TreeListView';
+import { dataAdapter } from './utils';
+import { getMenuNodes, addNodeToSelected, deleteNodeFromSelected } from './actions';
 
-// just styling for text on left
-const SelectedNode = styled.Text`
-  fontSize: 30;
-  textAlign: center;
-`;
-
-// took this project head on with some tree traversals to give
-// it a robust dynamic functionality
-
-// helper for tree traversal to transform data
-// structure for the child nodes
-export const rawChildToChild = (rawChild) => {
-  // if the data is completely messed up return
-  if (!rawChild) return {};
-
-  // start new structure
-  let newStruct = {
-    title: rawChild.checkDesc,
-    salesMode: rawChild.salesMode,
-    modifierType: rawChild.modifierType,
-  };
-
-  // deepest child
-  if (rawChild.childMenuItems === undefined) return newStruct;
-  // children exist or is empty
-  // recurse and go
-  newStruct.children = rawChild.childMenuItems.map((child) => rawChildToChild(child));
-  // return the new struct with children restrcutured
-  return newStruct;
-};
-
-// maps the data structure to the components
-// expectations
-export const dataAdapter = (data) => {
-  return data.menuItems.map((menuItem) => rawChildToChild(menuItem));
-};
-
-class Menu extends Component {
+export class Menu extends Component {
   // wish i could get ride of having a custom constructor
   constructor(props) {
     super(props);
-
     // probably remove this later
-    const rawNodes = require('../../datasets/games.json');
     this.state = {
       selectedNodeChildren: [],
       // create expected nodes data structure
-      nodes: dataAdapter(rawNodes), 
       selectedNodes: [{ title: 'No node selected', children: [] }],
     };
+  }
+
+  componentDidMount() {
+    // hydrate the menu from static file
+    this.props.getMenuNodes();
   }
 
   optionSelected(option) {
     // create space for appending children where root name equals option
     let children = [];
-    this.state.nodes.forEach((node) => { if (node.title === option) return children.push(...node.children)});
+    this.props.nodes.forEach((node) => { if (node.title === option) return children.push(...node.children)});
     this.setState({
       selectedNodeChildren: children,
     });
   }
 
-  // WIP: still need to implement business logic
   nodePressed(node) {
-    const newSelectedNodes = [ ...this.state.selectedNodes, node ];
-    this.setState({
-      selectedNodes: newSelectedNodes,
-    });
+    if (node.salesMode === 'NORMAL') {
+      // if node is the same as one already selected dont add it
+      // not sure if we should remove it from the menu all together...?
+      const exists = this.props.selectedNodes.find((cn) => cn.id === node.id);
+      if (!exists) {
+        this.props.addNodeToSelected(node);
+      }
+    }
   }
 
   nodeRemove(node) {
-    const nodeIndex = this.state.selectedNodes.map((n, i) => { if (n.title === node.title) return i })[1];
-    const newSelectedNodes = [
-      ...this.state.selectedNodes.slice(0, nodeIndex),
-      ...this.state.selectedNodes.slice(nodeIndex + 1),
-    ]
-    console.log(newSelectedNodes);
-    console.log(nodeIndex);
-    this.setState({
-      selectedNodes: newSelectedNodes,
-    });
+    // find the objects index in the selectedNodes array and remove it immutiably
+    const nodeIndex = this.props.selectedNodes.indexOf(node);
+    this.props.deleteNodeFromSelected(nodeIndex);
   }
 
   render() {
     return (
       <View style={{ flex: 1, paddingTop: 11, flexWrap: 'wrap', flexDirection: 'row' }}>
         <Section>
-          <TreeListView nodes={this.state.selectedNodes} onNodePress={this.nodeRemove.bind(this)} />
+          <TreeListView nodes={this.props.selectedNodes} onNodePress={this.nodeRemove.bind(this)} />
         </Section>
         <Section>
           <OptionsBar
-            options={this.state.nodes.map((node) => node.title)}
+            options={this.props.nodes.map((node) => node.title)}
             onOptionSelect={this.optionSelected.bind(this)}
           />
           <Section>
@@ -108,4 +73,41 @@ class Menu extends Component {
   }
 };
 
-export default Menu;
+Menu.propTypes = {
+  nodes: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      title: PropTypes.string,
+      salesmode: PropTypes.string,
+      modifiertype: PropTypes.string,
+    }),
+  ),
+  selectedNodes: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      title: PropTypes.string,
+      salesmode: PropTypes.string,
+      modifiertype: PropTypes.string,
+    }),
+  ),
+};
+
+Menu.defaultProps = {
+  nodes: [],
+  selectedNodes: [],
+};
+
+const mapStateToProps = (state) => {
+  return {
+    nodes: dataAdapter(state.menuItems),
+    selectedNodes: state.selectedNodes,
+  };
+};
+
+const mapDipsatchToProps = {
+  getMenuNodes,
+  addNodeToSelected,
+  deleteNodeFromSelected,
+};
+
+export default connect(mapStateToProps, mapDipsatchToProps)(Menu);
