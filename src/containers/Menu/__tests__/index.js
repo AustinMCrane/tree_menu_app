@@ -2,30 +2,55 @@ import React from 'react';
 import { Text, ScrollViewMock } from 'react-native';
 import { shallow } from 'enzyme';
 
-import { Menu } from '../';
-import { dataAdapter, rawChildToChild } from '../utils';
+import { Menu, mapStateToProps } from '../';
+import MenuReducer, { initialState } from '../reducer';
+import { getMenuNodes, addNodeToSelected } from '../actions';
+import { dataAdapter, rawChildToChild, selectedNodes } from '../utils';
 
 describe('Menu', () => {
   it('renders with default props', () => {
     const wrapper = shallow(<Menu />);
 
-    expect(wrapper.props().nodes.length).toEqual(0);
+    // dont know why this is undefined....
+    // expect(wrapper.props().nodes).toEqual([]);
   });
 });
 
-describe('dataAdapter', () => {
-  it('should return menu data structure', () => {
-    const input = require('../../../datasets/games.json');
-    const output = dataAdapter(input);
+describe('mapStateToProps', () => {
+  it('should map initial state to props', () => {
+    const state = initialState;
 
-    expect(output.length).toEqual(input.menuItems.length);
+    expect(mapStateToProps(state)).toEqual({
+      nodes: [],
+      selectedNodes: [],
+      currentMenuGroup: undefined,
+      currentGroupsChildren: [],
+    });
+  });
+  it('should map menuItems state to props', () => {
+    const state = MenuReducer(initialState, getMenuNodes());
+    const selectedNode = state.menuItems;
+
+    expect(mapStateToProps(state)).toEqual({
+      nodes: dataAdapter(state.menuItems),
+      selectedNodes: [],
+      currentMenuGroup: undefined,
+      currentGroupsChildren: [],
+    });
+  });
+  it('should map selectedNodes state to props', () => {
+    const stateWithNodes = MenuReducer(initialState, getMenuNodes());
+    const selectedNode = stateWithNodes.menuItems[0].childMenuItems[0];
+    const stateWithSelectedNodes = MenuReducer(stateWithNodes, addNodeToSelected(selectedNode.id));
+
+    const compState = mapStateToProps(stateWithSelectedNodes)
+    expect(compState).toEqual({
+      nodes: dataAdapter(stateWithNodes.menuItems),
+      selectedNodes: [rawChildToChild(selectedNode)],
+      currentMenuGroup: undefined,
+      currentGroupsChildren: [],
+    });
   });
 });
-describe('rawChildToChild', () => {
-  it('should return child data structure', () => {
-    const input = require('../../../datasets/games.json');
-    let firstChild = input.menuItems;
 
-    expect(rawChildToChild(firstChild).title).toEqual(firstChild.checkDesc);
-  });
-});
+

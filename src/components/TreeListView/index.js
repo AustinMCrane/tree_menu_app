@@ -5,6 +5,15 @@ import styled from 'styled-components/native';
 
 import { CardSection, Card } from '../common/';
 import NodeCell from './NodeCell';
+
+const PlaceHolder = styled(Text)`
+  flex: 1;
+  fontSize: 50;
+  flexDirection: row;
+  textAlign: center;
+  paddingTop: 20;
+`;
+
 class TreeListView extends Component {
 
   nodeClicked(node) {
@@ -34,7 +43,7 @@ class TreeListView extends Component {
     const nodes = this.props.nodes.map((node) => this.renderNode(node));
     return (
       <ScrollView>
-        {nodes.length ? nodes : <Text>No Children</Text>}
+        {nodes.length ? nodes : <PlaceHolder>Select Options</PlaceHolder>}
       </ScrollView>
     );
   }

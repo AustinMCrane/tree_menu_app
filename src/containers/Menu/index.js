@@ -7,33 +7,18 @@ import PropTypes from 'prop-types';
 import Section from '../../components/Section';
 import OptionsBar from '../../components/OptionsBar';
 import TreeListView from '../../components/TreeListView';
-import { dataAdapter } from './utils';
-import { getMenuNodes, addNodeToSelected, deleteNodeFromSelected } from './actions';
+import { dataAdapter, selectedNodes } from './utils';
+import { getMenuNodes, addNodeToSelected, deleteNodeFromSelected, selectMenuGroup } from './actions';
 
 export class Menu extends Component {
-  // wish i could get ride of having a custom constructor
-  constructor(props) {
-    super(props);
-    // probably remove this later
-    this.state = {
-      selectedNodeChildren: [],
-      // create expected nodes data structure
-      selectedNodes: [{ title: 'No node selected', children: [] }],
-    };
-  }
-
   componentDidMount() {
     // hydrate the menu from static file
     this.props.getMenuNodes();
   }
 
   optionSelected(option) {
-    // create space for appending children where root name equals option
-    let children = [];
-    this.props.nodes.forEach((node) => { if (node.title === option) return children.push(...node.children)});
-    this.setState({
-      selectedNodeChildren: children,
-    });
+    const topLevelNode = this.props.nodes.find((node) => node.title == option);
+    this.props.selectMenuGroup(this.props.nodes.indexOf(topLevelNode));
   }
 
   nodePressed(node) {
@@ -42,20 +27,18 @@ export class Menu extends Component {
       // not sure if we should remove it from the menu all together...?
       const exists = this.props.selectedNodes.find((cn) => cn.id === node.id);
       if (!exists) {
-        this.props.addNodeToSelected(node);
+        this.props.addNodeToSelected(node.id);
       }
     }
   }
 
   nodeRemove(node) {
-    // find the objects index in the selectedNodes array and remove it immutiably
-    const nodeIndex = this.props.selectedNodes.indexOf(node);
-    this.props.deleteNodeFromSelected(nodeIndex);
+    this.props.deleteNodeFromSelected(node.id);
   }
 
   render() {
     return (
-      <View style={{ flex: 1, paddingTop: 11, flexWrap: 'wrap', flexDirection: 'row' }}>
+      <View style={{ flex: 1, paddingTop: 30, flexWrap: 'wrap', flexDirection: 'row' }}>
         <Section>
           <TreeListView nodes={this.props.selectedNodes} onNodePress={this.nodeRemove.bind(this)} />
         </Section>
@@ -63,9 +46,10 @@ export class Menu extends Component {
           <OptionsBar
             options={this.props.nodes.map((node) => node.title)}
             onOptionSelect={this.optionSelected.bind(this)}
+            selectedOption={this.props.currentMenuGroup}
           />
           <Section>
-            <TreeListView nodes={this.state.selectedNodeChildren} onNodePress={this.nodePressed.bind(this)}/>
+            <TreeListView nodes={this.props.currentGroupsChildren} onNodePress={this.nodePressed.bind(this)}/>
           </Section>
         </Section>
       </View>
@@ -90,17 +74,38 @@ Menu.propTypes = {
       modifiertype: PropTypes.string,
     }),
   ),
+  currentGroupsChildren: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      title: PropTypes.string,
+      salesmode: PropTypes.string,
+      modifiertype: PropTypes.string,
+    }),
+  ),
+  getMenuNodes: PropTypes.func,
+  addNodeToSelected: PropTypes.func,
+  deleteNodeFromSelected: PropTypes.func,
 };
 
+// default properties, used when props arent defined
 Menu.defaultProps = {
   nodes: [],
   selectedNodes: [],
+  getMenuNodes: () => console.log('getMenuNodes is default'),
+  addNodeToSelected: () => console.log('addNodeToSelected is default'),
+  deleteNodeFromSelected: () => console.log('deleteNodeFromSelected is default'),
 };
 
-const mapStateToProps = (state) => {
+// export for testing
+// Optimization needed....
+export const mapStateToProps = (state) => {
+  const nodes = dataAdapter(state.menuItems);
+  const currentGroup = nodes[state.currentMenuGroup]
   return {
-    nodes: dataAdapter(state.menuItems),
-    selectedNodes: state.selectedNodes,
+    nodes: nodes,
+    currentMenuGroup: state.currentMenuGroup,
+    selectedNodes: selectedNodes(state.selectedNodes, nodes),
+    currentGroupsChildren: currentGroup ? currentGroup.children : [],
   };
 };
 
@@ -108,6 +113,7 @@ const mapDipsatchToProps = {
   getMenuNodes,
   addNodeToSelected,
   deleteNodeFromSelected,
+  selectMenuGroup,
 };
 
 export default connect(mapStateToProps, mapDipsatchToProps)(Menu);

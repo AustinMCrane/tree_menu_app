@@ -1,18 +1,18 @@
 import * as MenuType from './types';
 
 // Add selected node to the left
-export const addNodeToSelected = (node) => {
+export const addNodeToSelected = (nodeId) => {
   return {
     type: MenuType.ADD_NODE_TO_SELECTED,
-    node,
+    nodeId,
   };
 };
 
 // Remove selected node from the left
-export const deleteNodeFromSelected = (nodeIndex) => {
+export const deleteNodeFromSelected = (nodeId) => {
   return {
     type: MenuType.DELETE_NODE_FROM_SELECTED,
-    nodeIndex,
+    nodeId,
   };
 };
 
@@ -23,5 +23,12 @@ export const getMenuNodes = () => {
   // also could add search
   return {
     type: MenuType.GET_MENU_NODES,
+  };
+};
+
+export const selectMenuGroup = (groupIndex) => {
+  return {
+    type: MenuType.MENU_GROUP_SELECTED,
+    groupIndex,
   };
 };

@@ -37,7 +37,6 @@ describe('ChildrenCard', () => {
       <ChildrenCard>
       </ChildrenCard>
     );
-    console.log(wrapper.props());
     expect(wrapper.props().children.length).toEqual(0);
   });
 });

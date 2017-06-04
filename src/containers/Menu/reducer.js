@@ -1,35 +1,64 @@
 import * as MenuType from './types';
 
 
-const initialState = {
+// initilal state of the application
+export const initialState = {
+  // array of node ids
   selectedNodes: [],
+  // tree stucture for the menu items
   menuItems: [],
-  currentMenuGroup: 0,
+  // top root group item by menuItems array index
+  // currentMenuGroup: 0,
 };
 
+/*
+ * Menu Reducer
+ * @author Austin Crane
+ *
+ * @param {object} state - the previous redux state
+ * @param {object} action - the incomming action that will generate new
+ * state
+ * @return {object} new application state
+ */
 const MenuReducer = (state = initialState, action) => {
   const type = action.type;
   switch (type) {
 
     case MenuType.MENU_GROUP_SELECTED:
-      return { ...state, currentMenuGroup: action.menuGroup };
+      return { ...state, currentMenuGroup: action.groupIndex };
 
     // hydrate the menuItems from static file
     case MenuType.GET_MENU_NODES:
-      return { ...state, menuItems: require('../../datasets/games.json') };
+      const staticFile = require('../../datasets/games.json');
+      return { ...state, menuItems: staticFile.menuItems };
 
+    // Add node by node id
     case MenuType.ADD_NODE_TO_SELECTED:
       // add the node
-      const newSelectedNodes = [ ...state.selectedNodes, action.node ];
-      return { ...state, selectedNodes: newSelectedNodes };
+      const addNodeIndex = state.selectedNodes.indexOf(action.nodeId);
+      if (addNodeIndex == -1) {
+        return { ...state, selectedNodes: [...state.selectedNodes, action.nodeId] };
+      } else {
+        // duplicate node id, dont do anything
+        return state;
+      }
 
+    // Remove the selected node from selected node array
     case MenuType.DELETE_NODE_FROM_SELECTED:
-      const selNodes = [
-        ...state.selectedNodes.slice(0, action.nodeIndex),
-        ...state.selectedNodes.slice(action.nodeIndex + 1),
-      ];
-      return { ...state, selectedNodes: selNodes };
+      const deleteNodeIndex = state.selectedNodes.indexOf(action.nodeId);
+      if (deleteNodeIndex != -1) {
+        const selNodes = [
+          ...state.selectedNodes.slice(0, deleteNodeIndex),
+          ...state.selectedNodes.slice(deleteNodeIndex + 1),
+        ];
+        return { ...state, selectedNodes: selNodes };
+      } else {
+        // was not found
+        return state;
+      }
 
+    // Return previous state when the action is not relavent
+    // to this reducer
     default:
       return state;
   }

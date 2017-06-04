@@ -9,9 +9,8 @@ const Bar = styled.View`
   justifyContent: center;
 `;
 
-const BarItem = styled.Button`
+const BarItem = styled(Button)`
   flex: 2;
-  backgroundColor: ${(props) => props.selected ? 'red' : '#fefefe'}
 `;
 
 class OptionsBar extends Component {
@@ -19,7 +18,15 @@ class OptionsBar extends Component {
   render() {
     return (
       <Bar>
-        {this.props.options.map((option) => <BarItem selected key={option} onPress={this.props.onOptionSelect.bind(this, option)} title={option} />)}
+        {this.props.options.map((option, index) => 
+          <BarItem 
+            raised
+            color={this.props.selectedOption === index ? 'red' : 'green'}
+            key={option}
+            onPress={this.props.onOptionSelect.bind(this, option)}
+            title={option}
+          />)
+        }
       </Bar>
     );
   }
