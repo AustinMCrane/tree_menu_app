@@ -26,6 +26,7 @@ describe('mapStateToProps', () => {
       currentMenuGroup: undefined,
       currentGroupsChildren: [],
       activeItemIds: [],
+      totalCost: 0,
     });
   });
   it('should map menuItems state to props', () => {
@@ -33,16 +34,17 @@ describe('mapStateToProps', () => {
     const selectedNode = state.menuItems;
 
     expect(mapStateToProps(state)).toEqual({
-      nodes: dataAdapter(state.menuItems),
+      nodes: state.menuItems,
       selectedNodes: [],
       currentMenuGroup: undefined,
       currentGroupsChildren: [],
       activeItemIds: [],
+      totalCost: 0,
     });
   });
   it('should map selectedNodes state to props', () => {
     const stateWithNodes = MenuReducer(initialState, getMenuNodes());
-    const selectedNode = stateWithNodes.menuItems[0].childMenuItems[0];
+    const selectedNode = stateWithNodes.menuItems[0].children[0];
     const stateWithSelectedNodes = MenuReducer(stateWithNodes, addNodeToSelected(selectedNode.id));
 
     const compState = mapStateToProps(stateWithSelectedNodes)
@@ -52,6 +54,7 @@ describe('mapStateToProps', () => {
       currentMenuGroup: undefined,
       currentGroupsChildren: [],
       activeItemIds: [],
+      totalCost: 0,
     });
   });
 });

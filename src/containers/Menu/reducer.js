@@ -24,8 +24,6 @@ export const initialState = {
  */
 const MenuReducer = (state = initialState, action) => {
   const type = action.type;
-  console.log('action', action);
-  console.log('state', state);
   switch (type) {
 
     case MenuType.MENU_GROUP_SELECTED:

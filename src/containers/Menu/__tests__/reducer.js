@@ -1,4 +1,5 @@
 import MenuReducer, { initialState } from '../reducer';
+import { dataAdapter } from '../utils';
 import {
   addNodeToSelected,
   deleteNodeFromSelected,
@@ -20,7 +21,7 @@ describe('MenuReducer', () => {
 
       expect(newState).toEqual({
         ...initialState,
-        menuItems: require('../../../datasets/games.json').menuItems,
+        menuItems: dataAdapter(require('../../../datasets/games.json').menuItems),
       });
     });
   });

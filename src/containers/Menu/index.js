@@ -51,7 +51,6 @@ export class Menu extends Component {
   }
 
   render() {
-    console.log('props',this.props);
     return (
       <View style={{ flex: 1, paddingTop: 30, flexWrap: 'wrap', flexDirection: 'row' }}>
         <Section>
@@ -128,7 +127,7 @@ export const mapStateToProps = (state) => {
   const nodes = state.menuItems;
   const currentGroup = nodes[state.currentMenuGroup]
   const selected = selectedNodes(state.selectedNodes, nodes);
-  let totalCost = [];
+  let totalCost = 0.0;
   // add them together for total cost
   selected.forEach((node) => { totalCost = Number(totalCost) + Number(node.cost) });
   return {

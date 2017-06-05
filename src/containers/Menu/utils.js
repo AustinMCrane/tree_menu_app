@@ -72,7 +72,6 @@ export const treeSearch = (rootNode, searchID) => {
     // the only time this function returns a non undefined
     return rootNode;
   } else {
-    console.log('--------', rootNode);
     // search its children
     if (rootNode.children) {
       // recurse through children
