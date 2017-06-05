@@ -8,6 +8,7 @@ export const rawChildToChild = (rawChild) => {
   if (!rawChild) return {};
 
   // start new structure
+  // map to the new structure
   let newStruct = {
     id: rawChild.id,
     title: rawChild.checkDesc,
@@ -31,10 +32,12 @@ export const rawChildToChild = (rawChild) => {
 export const dataAdapter = (data) => {
   // if data not yet populated return empty array
   if (!data) return [];
+  // map raw child to a new child
   return data.map((menuItem) => rawChildToChild(menuItem));
 };
 
 
+// grabs the shallow nodes and adds them to an array
 export const topLevelChildren = (data) => {
   let children = [];
   data.forEach((node) => {
@@ -49,6 +52,7 @@ export const topLevelChildren = (data) => {
 // nodes.
 // nodes => button group top level nodes
 // NEEDS SOME OPTIMIZATION!!!
+// O(n^2)
 export const selectedNodes = (nodeIDs, nodes) => {
   // get the top level children of the nodes
   let topChildren = topLevelChildren(nodes);
@@ -68,6 +72,7 @@ export const selectedNodes = (nodeIDs, nodes) => {
 export const treeSearch = (rootNode, searchID) => {
   // if rootNode is null return
   if (!rootNode) return;
+  // does the node id match the search qurey?
   if (rootNode.id === searchID) {
     // the only time this function returns a non undefined
     return rootNode;

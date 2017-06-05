@@ -26,6 +26,7 @@ export const getMenuNodes = () => {
   };
 };
 
+// select the top level group item to show on right
 export const selectMenuGroup = (groupIndex) => {
   return {
     type: MenuType.MENU_GROUP_SELECTED,
@@ -33,6 +34,7 @@ export const selectMenuGroup = (groupIndex) => {
   };
 };
 
+// changes/adds a active item to the redux store
 export const changeActiveItem = (activeItemId) => {
   return {
     type: MenuType.CHANGE_ACTIVE_ITEM,
