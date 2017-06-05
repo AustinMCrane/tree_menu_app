@@ -1,7 +1,8 @@
 import { 
   dataAdapter,
   rawChildToChild,
-  selectedNodes
+  selectedNodes,
+  treeSearch,
 } from '../utils';
 
 describe('dataAdapter', () => {
@@ -34,5 +35,18 @@ describe('selectedNodes', () => {
     const selectedIds = [203];
 
     expect(selectedNodes(selectedIds, adaptedData).length).toEqual(1);
+  });
+});
+
+describe('treeSearch', () => {
+  it('should find a node', () => {
+    const input = require('../../../datasets/games.json').menuItems;
+    const adaptedData = dataAdapter(input);
+    const subTree = adaptedData[0]
+    const searchId = subTree.children[1].children[0]
+    console.log(searchId);
+
+    const found = treeSearch( subTree, searchId.id);
+    expect(found.id).toEqual(searchId.id);
   });
 });

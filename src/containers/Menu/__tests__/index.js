@@ -25,6 +25,7 @@ describe('mapStateToProps', () => {
       selectedNodes: [],
       currentMenuGroup: undefined,
       currentGroupsChildren: [],
+      activeItemIds: [],
     });
   });
   it('should map menuItems state to props', () => {
@@ -36,6 +37,7 @@ describe('mapStateToProps', () => {
       selectedNodes: [],
       currentMenuGroup: undefined,
       currentGroupsChildren: [],
+      activeItemIds: [],
     });
   });
   it('should map selectedNodes state to props', () => {
@@ -49,6 +51,7 @@ describe('mapStateToProps', () => {
       selectedNodes: [rawChildToChild(selectedNode)],
       currentMenuGroup: undefined,
       currentGroupsChildren: [],
+      activeItemIds: [],
     });
   });
 });

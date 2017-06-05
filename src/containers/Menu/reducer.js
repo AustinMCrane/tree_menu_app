@@ -1,4 +1,5 @@
 import * as MenuType from './types';
+import { treeSearch, dataAdapter } from './utils';
 
 
 // initilal state of the application
@@ -9,6 +10,7 @@ export const initialState = {
   menuItems: [],
   // top root group item by menuItems array index
   // currentMenuGroup: 0,
+  activeItemIds: [],
 };
 
 /*
@@ -22,6 +24,8 @@ export const initialState = {
  */
 const MenuReducer = (state = initialState, action) => {
   const type = action.type;
+  console.log('action', action);
+  console.log('state', state);
   switch (type) {
 
     case MenuType.MENU_GROUP_SELECTED:
@@ -30,7 +34,7 @@ const MenuReducer = (state = initialState, action) => {
     // hydrate the menuItems from static file
     case MenuType.GET_MENU_NODES:
       const staticFile = require('../../datasets/games.json');
-      return { ...state, menuItems: staticFile.menuItems };
+      return { ...state, menuItems: dataAdapter(staticFile.menuItems) };
 
     // Add node by node id
     case MenuType.ADD_NODE_TO_SELECTED:
@@ -41,6 +45,29 @@ const MenuReducer = (state = initialState, action) => {
       } else {
         // duplicate node id, dont do anything
         return state;
+      }
+
+    // expand the selected item to show children
+    case MenuType.CHANGE_ACTIVE_ITEM:
+      if (state.activeItemIds.length > 0) {
+        const currentActiveID = state.activeItemIds[0];
+        console.log('search ----', currentActiveID);
+        // check if the incoming active item is a child of the
+        // current active item
+        // tree search to find currentActive node
+        const currentActiveNode = treeSearch(state.menuItems[state.currentMenuGroup], currentActiveID);
+        console.log('currentActiveNode', currentActiveNode);
+        const isChildNode = treeSearch(currentActiveNode, action.activeItemId);
+        console.log(isChildNode);
+        if (isChildNode) {
+          // item is a child of the last activeItemId
+          return { ...state, activeItemIds: [ ...state.activeItemIds, action.activeItemId ]};
+        } else {
+          // only one item should be selected sense they arent children
+          return { ...state, activeItemIds: [ action.activeItemId ]}
+        }
+      } else {
+        return { ...state, activeItemIds: [ action.activeItemId ] };
       }
 
     // Remove the selected node from selected node array

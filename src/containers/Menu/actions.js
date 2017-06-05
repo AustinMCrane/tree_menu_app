@@ -32,3 +32,10 @@ export const selectMenuGroup = (groupIndex) => {
     groupIndex,
   };
 };
+
+export const changeActiveItem = (activeItemId) => {
+  return {
+    type: MenuType.CHANGE_ACTIVE_ITEM,
+    activeItemId,
+  };
+}

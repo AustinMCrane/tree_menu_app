@@ -75,6 +75,13 @@
                            "basePrice":20.00,
                            "modifierType":"TERMINAL",
                            "salesMode":"MODIFIER"
+                        },
+                        {
+                          "id":404,
+                          "checkDesc":"Painted Things",
+                          "basePrice":20.00,
+                          "modifierType":"TERMINAL",
+                          "salesMode":"MODIFIER"
                         }
                      ]
                   }

@@ -7,8 +7,15 @@ import PropTypes from 'prop-types';
 import Section from '../../components/Section';
 import OptionsBar from '../../components/OptionsBar';
 import TreeListView from '../../components/TreeListView';
+import { Card, CardSection } from '../../components/common';
 import { dataAdapter, selectedNodes } from './utils';
-import { getMenuNodes, addNodeToSelected, deleteNodeFromSelected, selectMenuGroup } from './actions';
+import { 
+  getMenuNodes,
+  addNodeToSelected,
+  deleteNodeFromSelected,
+  selectMenuGroup,
+  changeActiveItem,
+} from './actions';
 
 export class Menu extends Component {
   componentDidMount() {
@@ -22,12 +29,19 @@ export class Menu extends Component {
   }
 
   nodePressed(node) {
-    if (node.salesMode === 'NORMAL') {
+    if (node.salesMode === 'NORMAL' || node.salesMode === 'MODIFIER_GROUP') {
+      this.props.changeActiveItem(node.id);
       // if node is the same as one already selected dont add it
       // not sure if we should remove it from the menu all together...?
       const exists = this.props.selectedNodes.find((cn) => cn.id === node.id);
       if (!exists) {
-        this.props.addNodeToSelected(node.id);
+        if (node.salesMode === 'MODIFIER_GROUP') {
+          // add all of its children too
+          this.props.addNodeToSelected(node.id);
+          node.children.forEach((child) => this.props.addNodeToSelected(child.id));
+        } else {
+          this.props.addNodeToSelected(node.id);
+        }
       }
     }
   }
@@ -37,10 +51,17 @@ export class Menu extends Component {
   }
 
   render() {
+    console.log('props',this.props);
     return (
       <View style={{ flex: 1, paddingTop: 30, flexWrap: 'wrap', flexDirection: 'row' }}>
         <Section>
-          <TreeListView nodes={this.props.selectedNodes} onNodePress={this.nodeRemove.bind(this)} />
+          <TreeListView nodes={this.props.selectedNodes} onNodePress={this.nodeRemove.bind(this)} >
+            <Card>
+              <CardSection>
+                <Text>Total: {this.props.totalCost}</Text>
+              </CardSection>
+            </Card>
+          </TreeListView>
         </Section>
         <Section>
           <OptionsBar
@@ -49,7 +70,11 @@ export class Menu extends Component {
             selectedOption={this.props.currentMenuGroup}
           />
           <Section>
-            <TreeListView nodes={this.props.currentGroupsChildren} onNodePress={this.nodePressed.bind(this)}/>
+            <TreeListView
+              activeItemIds={this.props.activeItemIds}
+              nodes={this.props.currentGroupsChildren}
+              onNodePress={this.nodePressed.bind(this)}
+            />
           </Section>
         </Section>
       </View>
@@ -94,18 +119,25 @@ Menu.defaultProps = {
   getMenuNodes: () => console.log('getMenuNodes is default'),
   addNodeToSelected: () => console.log('addNodeToSelected is default'),
   deleteNodeFromSelected: () => console.log('deleteNodeFromSelected is default'),
+  activeItemIds: [],
 };
 
 // export for testing
 // Optimization needed....
 export const mapStateToProps = (state) => {
-  const nodes = dataAdapter(state.menuItems);
+  const nodes = state.menuItems;
   const currentGroup = nodes[state.currentMenuGroup]
+  const selected = selectedNodes(state.selectedNodes, nodes);
+  let totalCost = [];
+  // add them together for total cost
+  selected.forEach((node) => { totalCost = Number(totalCost) + Number(node.cost) });
   return {
     nodes: nodes,
+    activeItemIds: state.activeItemIds,
     currentMenuGroup: state.currentMenuGroup,
-    selectedNodes: selectedNodes(state.selectedNodes, nodes),
+    selectedNodes: selected,
     currentGroupsChildren: currentGroup ? currentGroup.children : [],
+    totalCost,
   };
 };
 
@@ -114,6 +146,7 @@ const mapDipsatchToProps = {
   addNodeToSelected,
   deleteNodeFromSelected,
   selectMenuGroup,
+  changeActiveItem,
 };
 
 export default connect(mapStateToProps, mapDipsatchToProps)(Menu);

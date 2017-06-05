@@ -12,6 +12,7 @@ export const rawChildToChild = (rawChild) => {
     id: rawChild.id,
     title: rawChild.checkDesc,
     salesMode: rawChild.salesMode,
+    cost: rawChild.basePrice,
     modifierType: rawChild.modifierType,
   };
 
@@ -54,11 +55,35 @@ export const selectedNodes = (nodeIDs, nodes) => {
   // loop through nodeIds and find the corisponding nodes
   let selected = [];
   nodeIDs.forEach((id) => {
-    topChildren.forEach((child) => {
-      if (child.id === id) {
-        selected.push(child);
-      }
+    topChildren.forEach((n) => {
+      const found = treeSearch(n, id);
+      if (found) selected.push(found);
     });
   });
   return selected;
 };
+
+
+// a simple search to find the node by node.id == searchID
+export const treeSearch = (rootNode, searchID) => {
+  // if rootNode is null return
+  if (!rootNode) return;
+  if (rootNode.id === searchID) {
+    // the only time this function returns a non undefined
+    return rootNode;
+  } else {
+    console.log('--------', rootNode);
+    // search its children
+    if (rootNode.children) {
+      // recurse through children
+      // probably could remove the for look and do a forEach
+      for (let i = 0; i < rootNode.children.length; i++) {
+        const n = rootNode.children[i];
+        const wasFound = treeSearch(n, searchID);
+        // if it was found return the node
+        if (wasFound) return wasFound;
+      }
+    }
+  }
+};
+
